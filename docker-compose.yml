@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  client:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    environment:
+      - VITE_API_URL=http://server:5001/api
+
+  server:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.server
+    ports:
+      - "5001:5001"
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/portfolio?schema=public
+      - NODE_ENV=production
+      - PORT=5001
+
+  postgres:
+    image: postgres:14
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=portfolio
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
