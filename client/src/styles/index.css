@@ -85,3 +85,85 @@ body {
 .form-focus-ring {
   @apply focus:outline-none focus:ring-2 focus:ring-accent/50 dark:focus:ring-accent/50 focus:border-accent dark:focus:border-accent;
 }
+
+/* Add these to your index.css file */
+
+/* Dark mode specific styling */
+.dark .skill-progress {
+  @apply bg-accent;
+}
+
+/* Light mode specific styling */
+.skill-progress {
+  @apply bg-accent-light;
+}
+
+/* Hover effects for skill items */
+.dark .hover-effect:hover {
+  @apply shadow-lg shadow-accent/10 -translate-y-1;
+}
+
+.hover-effect:hover {
+  @apply shadow-lg shadow-accent-light/10 -translate-y-1;
+}
+
+/* Enhanced timeline animations */
+.timeline-dot {
+  @apply relative;
+}
+
+.timeline-dot::before {
+  content: '';
+  @apply absolute w-full h-full rounded-full opacity-0;
+  animation: pulse 2s infinite;
+}
+
+.dark .timeline-dot::before {
+  @apply bg-accent;
+}
+
+.timeline-dot::before {
+  @apply bg-accent-light;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  70% { transform: scale(2); opacity: 0; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* Animated border effect */
+.animated-border-gradient {
+  position: relative;
+}
+
+.animated-border-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: linear-gradient(45deg, 
+    theme('colors.accent.DEFAULT'), 
+    theme('colors.purple.500'),
+    theme('colors.accent.DEFAULT'));
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.animated-border-gradient:hover::after {
+  opacity: 1;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
