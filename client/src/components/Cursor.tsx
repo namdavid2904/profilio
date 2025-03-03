@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 const CustomCursor = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -39,7 +39,7 @@ const CustomCursor = () => {
     };
   }, []);
   
-  const variants = {
+  const variants: Variants = {
     default: {
       x: position.x - 16,
       y: position.y - 16,
@@ -57,7 +57,7 @@ const CustomCursor = () => {
       width: 48,
       x: position.x - 24,
       y: position.y - 24,
-      mixBlendMode: 'difference',
+      mixBlendMode: "difference" as const,
     }
   };
   
