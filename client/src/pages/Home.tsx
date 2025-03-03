@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-// import MainScene from '../scenes/MainScene';
-import ParticleBackground from '../components/ParticleBackground';
+import { Link } from 'react-router-dom';
+import ParticleBackground from '../components/Background';
 
 const Home: React.FC = () => {
   return (
@@ -17,7 +17,7 @@ const Home: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-center">
 
-          <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
+          <h1 className="text-5xl md:text-7xl font-bold dark:text-white text-gray-800 mb-6">
             <span className="block">Hello World, I'm</span>
             <span className="text-[#8352FD]">Nam</span>
           </h1>
@@ -26,7 +26,7 @@ const Home: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-xl text-secondary max-w-md mx-auto mb-8">
+            className="text-xl dark:text-secondary text-gray-600 max-w-md mx-auto mb-8">
             A Full-stack Developer and Part-time Designer
           </motion.p>
           
@@ -34,23 +34,24 @@ const Home: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.8 }}>
-            <a 
-              href="#explore" 
-              className="px-6 py-3 rounded-full bg-[#8352FD] text-white font-medium hover:bg-opacity-80 transition-all">
+            {/* Change from anchor tag to Link component */}
+            <Link 
+              to="/projects" 
+              className="px-6 py-3 rounded-full bg-[#8352FD] text-white font-medium hover:bg-opacity-80 transition-all inline-block">
               Explore My Work
-            </a>
+            </Link>
           </motion.div>
         </motion.div>
       </div>
       
-      {/* Scroll */}
+      {/* Scroll indicator */}
       <motion.div 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
         animate={{ y: [0, 10, 0] }}
         transition={{ repeat: Infinity, duration: 1.5 }}>
-        <div className="w-[30px] h-[50px] rounded-full border-2 border-secondary flex justify-center">
+        <div className="w-[30px] h-[50px] rounded-full border-2 dark:border-secondary border-gray-400 flex justify-center">
           <motion.div 
-            className="w-2 h-2 rounded-full bg-secondary mt-2"
+            className="w-2 h-2 rounded-full dark:bg-secondary bg-gray-400 mt-2"
             animate={{ y: [0, 24, 0] }}
             transition={{ repeat: Infinity, duration: 1.5 }}/>
         </div>
