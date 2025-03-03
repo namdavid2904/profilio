@@ -1,12 +1,13 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import MainScene from '../scenes/MainScene';
+// import MainScene from '../scenes/MainScene';
+import ParticleBackground from '../components/ParticleBackground';
 
 const Home: React.FC = () => {
   return (
     <section className="relative h-screen w-full">
       {/* 3D background scene */}
-      <MainScene className="absolute inset-0" />
+      <ParticleBackground className="absolute inset-0"/>
       
       {/* Content with some cool animations */}
       <div className="absolute inset-0 flex flex-col items-center justify-center z-10 p-4">
