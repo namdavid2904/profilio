@@ -7,12 +7,14 @@ const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const springConfig = { damping: 20, stiffness: 300 };
+  const springConfig = { damping: 25, stiffness: 400, mass: 0.8 };
   const cursorX = useSpring(mouseX, springConfig);
   const cursorY = useSpring(mouseY, springConfig);
+  
   const [clicked, setClicked] = useState(false);
   const [linkHovered, setLinkHovered] = useState(false);
   const [stickyElement, setStickyElement] = useState<Element | null>(null);
+  const [breakingFree, setBreakingFree] = useState(false);
   
   // Colors based on theme
   const cursorColor = theme === 'dark' ? "#8352FD" : "#6d28d9";
@@ -27,20 +29,45 @@ const CustomCursor = () => {
         const distX = e.clientX - elementCenterX;
         const distY = e.clientY - elementCenterY;
         const distance = Math.sqrt(distX * distX + distY * distY);
-      
-        const stickyRadius = 100;
+        
+        const stickyRadius = 120;
+        const breakingPoint = 80;
         
         if (distance < stickyRadius) {
-          const pullStrength = 1 - (distance / stickyRadius);
-          const newX = e.clientX - (distX * pullStrength * 0.3);
-          const newY = e.clientY - (distY * pullStrength * 0.3);
+          // Calculate strength of "pull" based on distance
+          let pullStrength;
+          
+          if (distance > breakingPoint) {
+            // reduce the stickiness gradually and faster
+            const breakingRatio = (distance - breakingPoint) / (stickyRadius - breakingPoint);
+            pullStrength = 0.7 * (1 - breakingRatio * breakingRatio);
+            
+            if (!breakingFree && distance > stickyRadius * 0.85) {
+              setBreakingFree(true);
+            }
+          } else {
+            // Strong pull when close to element
+            pullStrength = 0.7 * (1 - (distance / breakingPoint));
+            setBreakingFree(false);
+          }
+          
+          // Calculate new position with enhanced pull effect
+          const newX = e.clientX - (distX * pullStrength);
+          const newY = e.clientY - (distY * pullStrength);
           
           mouseX.set(newX);
           mouseY.set(newY);
           return;
+        } else if (breakingFree) {
+          // Add a spring effect when breaking free
+          setBreakingFree(false);
+          mouseX.set(e.clientX + distX * 0.1);
+          mouseY.set(e.clientY + distY * 0.1);
+          return;
         }
       }
       
+      // Normal cursor behavior when not sticky
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
@@ -51,6 +78,20 @@ const CustomCursor = () => {
     const handleLinkHoverStart = (e: MouseEvent) => {
       setLinkHovered(true);
       setStickyElement(e.target as Element);
+      
+      // Add subtle "pull-in" effect when first hovering
+      if (!stickyElement && cursorRef.current) {
+        const rect = (e.target as Element).getBoundingClientRect();
+        const elementCenterX = rect.left + rect.width / 2;
+        const elementCenterY = rect.top + rect.height / 2;
+        
+        // Create a slight pull toward the element center
+        const pullX = (elementCenterX - e.clientX) * 0.1;
+        const pullY = (elementCenterY - e.clientY) * 0.1;
+        
+        mouseX.set(e.clientX + pullX);
+        mouseY.set(e.clientY + pullY);
+      }
     };
     
     const handleLinkHoverEnd = () => {
@@ -82,7 +123,7 @@ const CustomCursor = () => {
         element.removeEventListener('mouseleave', handleLinkHoverEnd as EventListener);
       });
     };
-  }, [mouseX, mouseY, stickyElement, clicked]);
+  }, [mouseX, mouseY, stickyElement, clicked, breakingFree]);
   
   const variants: Variants = {
     default: {
@@ -91,6 +132,7 @@ const CustomCursor = () => {
       borderWidth: '2px',
       borderColor: cursorColor,
       backgroundColor: 'rgba(0, 0, 0, 0)',
+      boxShadow: theme === 'dark' ? '0 0 10px rgba(131, 82, 253, 0.3)' : 'none',
     },
     clicked: {
       height: 28,
@@ -98,6 +140,7 @@ const CustomCursor = () => {
       borderWidth: '2px',
       borderColor: cursorColor,
       backgroundColor: `${cursorColor}4D`, // 30% opacity
+      boxShadow: theme === 'dark' ? '0 0 15px rgba(131, 82, 253, 0.5)' : '0 0 10px rgba(109, 40, 217, 0.3)',
     },
     hovered: {
       height: 60,
@@ -106,6 +149,22 @@ const CustomCursor = () => {
       borderColor: cursorColor,
       backgroundColor: `${cursorColor}1A`, // 10% opacity
       mixBlendMode: "difference" as const,
+      boxShadow: theme === 'dark' ? '0 0 20px rgba(131, 82, 253, 0.4)' : '0 0 15px rgba(109, 40, 217, 0.2)',
+    },
+    breakingFree: {
+      height: 40,
+      width: 40,
+      borderWidth: '1.5px',
+      borderColor: cursorColor,
+      backgroundColor: `${cursorColor}33`, // 20% opacity
+      scale: 1.1,
+      rotate: 15,
+      transition: {
+        duration: 0.3,
+        type: 'spring',
+        stiffness: 500,
+        damping: 10
+      }
     }
   };
   
@@ -120,12 +179,16 @@ const CustomCursor = () => {
         translateY: "-50%",
       }}
       variants={variants}
-      animate={linkHovered ? 'hovered' : clicked ? 'clicked' : 'default'}
+      animate={
+        breakingFree ? 'breakingFree' : 
+        linkHovered ? 'hovered' : 
+        clicked ? 'clicked' : 'default'
+      }
       transition={{ 
         type: 'spring', 
-        stiffness: 300, 
-        damping: 20,
-        mass: 0.5
+        stiffness: 400, 
+        damping: 25,
+        mass: 0.8
       }}
     />
   );
