@@ -5,6 +5,7 @@
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   color-scheme: dark light;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -15,16 +16,72 @@ body {
 
 /* Dark mode */
 .dark body {
-  background-color: theme('colors.primary');
+  background-color: theme('colors.primary.DEFAULT');
   color: white;
 }
 
 /* Light mode (default) */
 body {
-  background-color: white;
-  color: theme('colors.gray.800');
+  background-color: theme('colors.primary.light');
+  color: theme('colors.secondary.light');
 }
 
 .transition-theme {
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+@layer components {
+  .button-primary {
+    @apply px-6 py-3 rounded-full font-medium transition-all;
+  }
+  
+  .button-primary-filled {
+    @apply button-primary bg-accent hover:bg-opacity-80 text-white;
+  }
+  
+  .button-primary-outline {
+    @apply button-primary border border-accent dark:text-white text-gray-800 hover:bg-accent/10;
+  }
+  
+  .card-base {
+    @apply p-6 rounded-xl transition-all dark:bg-tertiary bg-tertiary-light dark:text-white text-gray-800 dark:shadow-dark shadow-light hover:shadow-xl;
+  }
+  
+  .skill-bar {
+    @apply w-full h-2 dark:bg-black-100 bg-gray-200 rounded-full overflow-hidden;
+  }
+  
+  .skill-progress {
+    @apply h-full bg-accent rounded-full;
+  }
+}
+
+@keyframes circle-animation {
+  0% {
+    stroke-dashoffset: 283;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes checkmark-animation {
+  0% {
+    stroke-dashoffset: 50;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.success-circle {
+  animation: circle-animation 0.6s ease-out forwards;
+}
+
+.success-check {
+  animation: checkmark-animation 0.6s 0.6s ease-out forwards;
+}
+
+.form-focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-accent/50 dark:focus:ring-accent/50 focus:border-accent dark:focus:border-accent;
 }
