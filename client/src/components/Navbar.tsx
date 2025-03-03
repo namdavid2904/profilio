@@ -20,6 +20,9 @@ const Navbar: React.FC = () => {
             <Link to="/about">About</Link>
           </li>
           <li className="dark:text-secondary text-gray-600 hover:dark:text-white hover:text-gray-900 transition-colors">
+            <Link to="/experience">Experience</Link>
+          </li>
+          <li className="dark:text-secondary text-gray-600 hover:dark:text-white hover:text-gray-900 transition-colors">
             <Link to="/projects">Projects</Link>
           </li>
           <li className="dark:text-secondary text-gray-600 hover:dark:text-white hover:text-gray-900 transition-colors">
