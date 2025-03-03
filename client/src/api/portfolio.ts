@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001/api';
 
 interface CreateMessageData {
   name: string;
@@ -53,6 +53,21 @@ export async function getSkills() {
     return await response.json();
   } catch (error) {
     console.error('Error fetching skills:', error);
+    throw error;
+  }
+}
+
+export async function getExperiences() {
+  try {
+    const response = await fetch(`${API_URL}/portfolio/experiences`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch experiences');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching experiences:', error);
     throw error;
   }
 }
