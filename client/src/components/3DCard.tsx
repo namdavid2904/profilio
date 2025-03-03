@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 interface CardProps {
   children: React.ReactNode;
@@ -7,6 +8,7 @@ interface CardProps {
 }
 
 const Card: React.FC<CardProps> = ({ children, className }) => {
+  const { theme } = useTheme();
   const cardRef = useRef<HTMLDivElement>(null);
   
   const x = useMotionValue(0);
@@ -55,7 +57,12 @@ const Card: React.FC<CardProps> = ({ children, className }) => {
         rotateX: springX,
         rotateY: springY,
       }}
-      whileHover={{ scale: 1.05 }}
+      whileHover={{ 
+        scale: 1.05,
+        boxShadow: theme === 'dark' 
+          ? '0 25px 50px -12px rgba(0, 0, 0, 0.5)' 
+          : '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+      }}
       whileTap={{ scale: 0.95 }}>
       {children}
     </motion.div>
