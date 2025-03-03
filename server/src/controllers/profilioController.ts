@@ -215,3 +215,85 @@ export const deleteSkill = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to delete skill' });
   }
 };
+
+// Experiences
+export const getExperiences = async (req: Request, res: Response) => {
+  try {
+    const experiences = await prisma.experience.findMany({
+      orderBy: {
+        startDate: 'desc',
+      },
+    });
+    res.json(experiences);
+  } catch (error) {
+    console.error('Error fetching experiences:', error);
+    res.status(500).json({ error: 'Failed to fetch experiences' });
+  }
+};
+
+export const createExperience = async (req: Request, res: Response) => {
+  try {
+    const { company, position, startDate, endDate, current, description, skills, location, logo } = req.body;
+    
+    const experience = await prisma.experience.create({
+      data: {
+        company,
+        position,
+        startDate: new Date(startDate),
+        endDate: endDate ? new Date(endDate) : undefined,
+        current,
+        description,
+        skills,
+        location,
+        logo,
+      },
+    });
+    
+    res.status(201).json(experience);
+  } catch (error) {
+    console.error('Error creating experience:', error);
+    res.status(500).json({ error: 'Failed to create experience' });
+  }
+};
+
+export const updateExperience = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { company, position, startDate, endDate, current, description, skills, location, logo } = req.body;
+    
+    const experience = await prisma.experience.update({
+      where: { id },
+      data: {
+        company,
+        position,
+        startDate: startDate ? new Date(startDate) : undefined,
+        endDate: endDate ? new Date(endDate) : undefined,
+        current,
+        description,
+        skills,
+        location,
+        logo,
+      },
+    });
+    
+    res.json(experience);
+  } catch (error) {
+    console.error('Error updating experience:', error);
+    res.status(500).json({ error: 'Failed to update experience' });
+  }
+};
+
+export const deleteExperience = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    
+    await prisma.experience.delete({
+      where: { id },
+    });
+    
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting experience:', error);
+    res.status(500).json({ error: 'Failed to delete experience' });
+  }
+};
