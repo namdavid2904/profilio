@@ -88,7 +88,7 @@ const SkillIcon: React.FC<{
         position={[0, 0, 0.06]}
         color="white"
         fontSize={0.15}
-        font="/fonts/inter-medium.woff"
+        //font="/fonts/inter-medium.woff"
         anchorX="center"
         anchorY="middle"
       >
@@ -157,7 +157,7 @@ const createConfetti = (x: number, y: number, theme: string) => {
     const angle = Math.random() * Math.PI * 2;
     const velocity = Math.random() * 6 + 2;
     const vx = Math.cos(angle) * velocity;
-    const vy = Math.sin(angle) * velocity - 2;
+    let vy = Math.sin(angle) * velocity - 2;
     let rotation = 0;
     const rotationSpeed = Math.random() * 0.3 - 0.15;
     
