@@ -1,0 +1,30 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color-scheme: dark light;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* Dark mode */
+.dark body {
+  background-color: theme('colors.primary');
+  color: white;
+}
+
+/* Light mode (default) */
+body {
+  background-color: white;
+  color: theme('colors.gray.800');
+}
+
+.transition-theme {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
