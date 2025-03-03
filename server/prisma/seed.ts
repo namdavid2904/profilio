@@ -1,10 +1,12 @@
+// server/prisma/seed.ts
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Delete existing skills
+  // Delete existing skills and experiences
   await prisma.skill.deleteMany({});
+  await prisma.experience.deleteMany({});
   
   // Languages
   await prisma.skill.createMany({
@@ -66,7 +68,36 @@ async function main() {
     ],
   });
 
-  console.log('Database has been seeded with skills');
+  // Work Experience
+  await prisma.experience.create({
+    data: {
+      company: "FPT Corporation",
+      position: "Software Engineer Intern",
+      startDate: new Date("2024-05-01"),
+      endDate: new Date("2024-08-31"),
+      current: false,
+      description: "• Built Asset Allocation module of a Human Resource Management System for 5000+ employees, containerizing with Docker, automating deployment with GitLab CI/CD, and hosting the server on Microsoft Azure.\n• Created 6 REST APIs for inventory management, allocation history, and utilization reports with .NET Core, establishing a real-time alert system with WebSocket to streamline inventory updates.\n• Boosted data retrieval 1.5x by replacing CTEs with indexed temp tables and analyzing execution in SQL Server.\n• Wrote comprehensive unit and integration tests following Test-Driven Development principles with xUnit and Swagger, boosting code quality and minimizing production incidents by 20%.",
+      skills: [".NET Core", "SQL Server", "Docker", "Azure", "GitLab CI/CD", "WebSocket", "xUnit", "Swagger"],
+      location: "Vietnam",
+      logo: "/assets/companies/fpt.png"
+    }
+  });
+
+  await prisma.experience.create({
+    data: {
+      company: "CodSoft",
+      position: "Software Engineer Intern",
+      startDate: new Date("2024-03-01"),
+      endDate: new Date("2024-05-31"),
+      current: false,
+      description: "• Developed a bookstore e-commerce website in MVC architecture with Node.js and Express, using MongoDB Atlas for data management, and handling 1000+ concurrent users through request queuing.\n• Reduced payment processing failures by 10% through implementing robust handling and retry mechanisms in Stripe integration, utilizing JWT authentication for secure transactions.\n• Integrated Cloudinary to store 2300+ books, enhancing storage cost through automated image compression.\n• Collaborated with a cross-functional team to design responsive web components with React.js and Bootstrap.",
+      skills: ["Node.js", "Express", "MongoDB", "React.js", "Bootstrap", "Stripe", "JWT", "Cloudinary"],
+      location: "Remote",
+      logo: "/assets/companies/codsoft.png"
+    }
+  });
+
+  console.log('Database has been seeded with skills and experiences');
 }
 
 main()
