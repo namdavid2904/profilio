@@ -59,15 +59,21 @@ export async function getSkills() {
 
 export async function getExperiences() {
   try {
-    const response = await fetch(`${API_URL}/portfolio/experiences`);
-
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    
+    const response = await fetch(`${API_URL}/portfolio/experiences`, {
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error('Failed to fetch experiences');
+      throw new Error(`Failed to fetch experiences: ${response.status} ${response.statusText}`);
     }
-
+    
     return await response.json();
   } catch (error) {
     console.error('Error fetching experiences:', error);
-    throw error;
+    return null;
   }
 }
