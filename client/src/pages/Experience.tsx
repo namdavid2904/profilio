@@ -26,10 +26,10 @@ const ExperienceCard: React.FC<{ experience: Experience }> = ({ experience }) =>
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-tertiary rounded-xl p-6 relative mb-8">
+      className="card-base mb-8">
       <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
         {experience.logo && (
-          <div className="w-16 h-16 rounded-full overflow-hidden bg-black-100 flex-shrink-0 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-full overflow-hidden dark:bg-black-100 bg-gray-100 flex-shrink-0 flex items-center justify-center">
             <img 
               src={experience.logo} 
               alt={experience.company}
@@ -43,21 +43,21 @@ const ExperienceCard: React.FC<{ experience: Experience }> = ({ experience }) =>
         <div>
           <h3 className="text-xl font-bold dark:text-white text-gray-800">{experience.position}</h3>
           <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
-            <span className="text-[#8352FD] font-medium">{experience.company}</span>
+            <span className="text-accent font-medium">{experience.company}</span>
             {experience.location && (
               <>
-                <span className="hidden md:inline text-secondary">•</span>
-                <span className="text-secondary">{experience.location}</span>
+                <span className="hidden md:inline dark:text-secondary text-secondary-light">•</span>
+                <span className="dark:text-secondary text-secondary-light">{experience.location}</span>
               </>
             )}
           </div>
-          <div className="text-sm dark:text-secondary text-gray-500 mt-1">
+          <div className="text-sm dark:text-secondary text-secondary-light mt-1">
             {formatDate(experience.startDate)} - {experience.current ? 'Present' : (experience.endDate ? formatDate(experience.endDate) : '')}
           </div>
         </div>
       </div>
       
-      <div className="dark:text-secondary text-gray-600 mb-4 whitespace-pre-line">
+      <div className="dark:text-secondary text-secondary-light mb-4 whitespace-pre-line">
         {experience.description}
       </div>
       
@@ -65,7 +65,7 @@ const ExperienceCard: React.FC<{ experience: Experience }> = ({ experience }) =>
         {experience.skills.map((skill, index) => (
           <span 
             key={index}
-            className="px-2 py-1 text-xs rounded-full bg-black-100 dark:text-secondary text-gray-600">
+            className="px-2 py-1 text-xs rounded-full dark:bg-black-100 bg-gray-100 dark:text-secondary text-secondary-light">
             {skill}
           </span>
         ))}
@@ -106,19 +106,19 @@ const Experience: React.FC = () => {
         
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-[#8352FD]"></div>
+            <div className="h-16 w-16 animate-spin rounded-full border-b-2 border-t-2 border-accent"></div>
           </div>
         ) : (
           <div className="relative">
             {/* Timeline line */}
-            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-700 hidden md:block"></div>
+            <div className="absolute left-4 top-0 bottom-0 w-0.5 dark:bg-gray-700 bg-gray-200 hidden md:block"></div>
             
             {/* Experiences */}
             <div className="space-y-12 relative">
               {experiences.map((experience) => (
                 <div key={experience.id} className="md:ml-12 relative">
                   {/* Timeline dot */}
-                  <div className="absolute -left-14 top-5 w-4 h-4 rounded-full bg-[#8352FD] hidden md:block"></div>
+                  <div className="absolute -left-14 top-5 w-4 h-4 rounded-full bg-accent hidden md:block"></div>
                   <ExperienceCard experience={experience} />
                 </div>
               ))}
