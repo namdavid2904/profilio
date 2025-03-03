@@ -25,7 +25,7 @@ function ParticleField() {
     
     if (!pointsRef.current) return;
     
-    // wWve effect
+    // Wave effect
     const positions = pointsRef.current.geometry.attributes.position.array as Float32Array;
     for (let i = 0; i < POINT_COUNT; i++) {
       const i3 = i * 3;
@@ -43,9 +43,7 @@ function ParticleField() {
       <bufferGeometry>
         <bufferAttribute
           attach="attributes-position"
-          count={POINT_COUNT}
-          array={points}
-          itemSize={3}/>
+          args={[points, 3]}/>
       </bufferGeometry>
       <PointMaterial
         size={0.05}
@@ -65,8 +63,8 @@ const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ className }) =>
   return (
     <div className={`h-full w-full ${className || ''}`}>
       <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <ambientLight intensity={0.5} />
-        <ParticleField />
+        <ambientLight intensity={0.5}/>
+        <ParticleField/>
       </Canvas>
     </div>
   );
