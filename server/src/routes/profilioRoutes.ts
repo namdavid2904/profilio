@@ -11,7 +11,11 @@ import {
   getSkills,
   createSkill,
   updateSkill,
-  deleteSkill
+  deleteSkill,
+  getExperiences,
+  createExperience,
+  updateExperience,
+  deleteExperience
 } from '../controllers/profilioController';
 
 const router = express.Router();
@@ -33,5 +37,11 @@ router.get('/skills', getSkills as RequestHandler);
 router.post('/skills', createSkill as RequestHandler);
 router.put('/skills/:id', updateSkill as RequestHandler);
 router.delete('/skills/:id', deleteSkill as RequestHandler);
+
+// Experience routes
+router.get('/experiences', getExperiences as RequestHandler);
+router.post('/experiences', createExperience as RequestHandler);
+router.put('/experiences/:id', updateExperience as RequestHandler);
+router.delete('/experiences/:id', deleteExperience as RequestHandler);
 
 export default router;
