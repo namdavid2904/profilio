@@ -2,6 +2,7 @@ import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { PointMaterial } from '@react-three/drei';
 import * as THREE from 'three';
+import { useTheme } from '../context/ThemeContext';
 
 const POINT_COUNT = 3000;
 
@@ -17,6 +18,7 @@ const generatePoints = (count: number) => {
 };
 
 function ParticleField() {
+  const { theme } = useTheme(); 
   const pointsRef = useRef<THREE.Points>(null);
   const points = useMemo(() => generatePoints(POINT_COUNT), []);
   
@@ -47,7 +49,7 @@ function ParticleField() {
       </bufferGeometry>
       <PointMaterial
         size={0.05}
-        color="#8352FD"
+        color={theme === 'dark' ? "#8352FD" : "#5429B8"}
         sizeAttenuation
         transparent
         depthWrite={false}/>
