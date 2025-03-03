@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { motion, Variants, useSpring, useMotionValue } from 'framer-motion';
+import { useTheme } from '../context/ThemeContext';
 
 const CustomCursor = () => {
+  const { theme } = useTheme();
   const cursorRef = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -12,16 +14,16 @@ const CustomCursor = () => {
   const [linkHovered, setLinkHovered] = useState(false);
   const [stickyElement, setStickyElement] = useState<Element | null>(null);
   
-  // Update mouse position on move
+  // Colors based on theme
+  const cursorColor = theme === 'dark' ? "#8352FD" : "#6d28d9";
+  
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      // If there's a sticky element, apply "sticky" effect
       if (stickyElement && !clicked) {
         const rect = stickyElement.getBoundingClientRect();
         const elementCenterX = rect.left + rect.width / 2;
         const elementCenterY = rect.top + rect.height / 2;
         
-        // Distance between mouse and element center
         const distX = e.clientX - elementCenterX;
         const distY = e.clientY - elementCenterY;
         const distance = Math.sqrt(distX * distX + distY * distY);
@@ -29,10 +31,7 @@ const CustomCursor = () => {
         const stickyRadius = 100;
         
         if (distance < stickyRadius) {
-          // Calculate strength of "pull" based on distance
           const pullStrength = 1 - (distance / stickyRadius);
-          
-          // Calculate new position with pull effect
           const newX = e.clientX - (distX * pullStrength * 0.3);
           const newY = e.clientY - (distY * pullStrength * 0.3);
           
@@ -65,7 +64,7 @@ const CustomCursor = () => {
     
     // Find all interactive elements 
     const interactiveElements = document.querySelectorAll(
-      'a, button, [role="button"], .nav-item, h1, h2, h3'
+      'a, button, [role="button"], .nav-item, h1, h2, h3, .interactive'
     );
     
     interactiveElements.forEach(element => {
@@ -90,19 +89,22 @@ const CustomCursor = () => {
       height: 32,
       width: 32,
       borderWidth: '2px',
-      backgroundColor: 'rgba(131, 82, 253, 0)',
+      borderColor: cursorColor,
+      backgroundColor: 'rgba(0, 0, 0, 0)',
     },
     clicked: {
       height: 28,
       width: 28, 
       borderWidth: '2px',
-      backgroundColor: 'rgba(131, 82, 253, 0.3)',
+      borderColor: cursorColor,
+      backgroundColor: `${cursorColor}4D`, // 30% opacity
     },
     hovered: {
       height: 60,
       width: 60,
       borderWidth: '1px', 
-      backgroundColor: 'rgba(131, 82, 253, 0.1)',
+      borderColor: cursorColor,
+      backgroundColor: `${cursorColor}1A`, // 10% opacity
       mixBlendMode: "difference" as const,
     }
   };
@@ -110,7 +112,7 @@ const CustomCursor = () => {
   return (
     <motion.div
       ref={cursorRef}
-      className="fixed top-0 left-0 rounded-full border-solid border-[#8352FD] z-50 pointer-events-none hidden md:block"
+      className="fixed top-0 left-0 rounded-full border-solid z-50 pointer-events-none hidden md:block"
       style={{
         x: cursorX,
         y: cursorY,
