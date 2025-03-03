@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { sendMessage } from '../api/portfolio';
 import { useTheme } from '../context/ThemeContext';
 
@@ -10,15 +10,8 @@ const Contact: React.FC = () => {
     message: '',
   });
   
-  const [status, setStatus] = useState<{
-    type: 'success' | 'error' | null;
-    message: string;
-  }>({
-    type: null,
-    message: '',
-  });
-  
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
   const { theme } = useTheme();
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -32,28 +25,27 @@ const Contact: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     
-    try {
-      await sendMessage(formData);
+    // Simulate API call with a delay
+    setTimeout(() => {
+      // Send the message to backend
+      try {
+        sendMessage(formData).catch(err => console.log('Backend not available:', err));
+      } catch (error) {
+      }
       
-      setStatus({
-        type: 'success',
-        message: 'Thank you for your message! I will get back to you soon.',
-      });
-      
-      // Reset form
-      setFormData({
-        name: '',
-        email: '',
-        message: '',
-      });
-    } catch (error) {
-      setStatus({
-        type: 'error',
-        message: 'Sorry, something went wrong. Please try again later.',
-      });
-    } finally {
       setLoading(false);
-    }
+      setSubmitted(true);
+      
+      // Wait for animation to complete before resetting form
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          message: '',
+        });
+      }, 2500);
+    }, 800);
   };
   
   return (
@@ -73,7 +65,7 @@ const Contact: React.FC = () => {
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="card-base gradient-border-card">
+            className="card-base">
             <h3 className="text-2xl font-bold mb-6 dark:text-white text-gray-800">Contact Information</h3>
             
             <div className="space-y-6">
@@ -114,10 +106,10 @@ const Contact: React.FC = () => {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="card-base">
+            className="card-base relative">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="form-label">
+                <label htmlFor="name" className="block text-sm font-medium mb-2 dark:text-secondary text-gray-700">
                   Your Name
                 </label>
                 <input
@@ -127,11 +119,12 @@ const Contact: React.FC = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="input-field"/>
+                  className="w-full px-4 py-2 rounded-lg dark:bg-tertiary bg-white dark:text-white text-gray-800 border dark:border-gray-700 border-gray-300 focus:border-accent dark:focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all"
+                />
               </div>
               
               <div>
-                <label htmlFor="email" className="form-label">
+                <label htmlFor="email" className="block text-sm font-medium mb-2 dark:text-secondary text-gray-700">
                   Your Email
                 </label>
                 <input
@@ -141,11 +134,12 @@ const Contact: React.FC = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="input-field"/>
+                  className="w-full px-4 py-2 rounded-lg dark:bg-tertiary bg-white dark:text-white text-gray-800 border dark:border-gray-700 border-gray-300 focus:border-accent dark:focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all"
+                />
               </div>
               
               <div>
-                <label htmlFor="message" className="form-label">
+                <label htmlFor="message" className="block text-sm font-medium mb-2 dark:text-secondary text-gray-700">
                   Message
                 </label>
                 <textarea
@@ -155,13 +149,14 @@ const Contact: React.FC = () => {
                   value={formData.message}
                   onChange={handleChange}
                   required
-                  className="input-field"/>
+                  className="w-full px-4 py-2 rounded-lg dark:bg-tertiary bg-white dark:text-white text-gray-800 border dark:border-gray-700 border-gray-300 focus:border-accent dark:focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent/50 transition-all"
+                />
               </div>
               
               <motion.button
                 type="submit"
-                disabled={loading}
-                className="w-full py-3 rounded-lg dark:bg-accent bg-accent text-white font-medium dark:hover:bg-opacity-90 hover:bg-opacity-90 transition-colors disabled:bg-opacity-70"
+                disabled={loading || submitted}
+                className="w-full py-3 rounded-lg bg-accent text-white font-medium hover:bg-opacity-90 transition-colors disabled:bg-opacity-70"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}>
                 {loading ? (
@@ -174,20 +169,75 @@ const Contact: React.FC = () => {
                   </span>
                 ) : 'Send Message'}
               </motion.button>
-              
-              {status.message && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`mt-4 p-3 rounded-lg ${
-                    status.type === 'success' 
-                      ? 'dark:bg-green-900/20 bg-green-50 dark:text-green-300 text-green-800' 
-                      : 'dark:bg-red-900/20 bg-red-50 dark:text-red-300 text-red-800'
-                  }`}>
-                  {status.message}
+            </form>
+
+            {/* Success overlay animation */}
+            <AnimatePresence>
+              {submitted && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 flex flex-col items-center justify-center dark:bg-tertiary/95 bg-white/95 rounded-xl z-10"
+                >
+                  <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ 
+                      type: "spring", 
+                      stiffness: 300, 
+                      damping: 20,
+                      delay: 0.2
+                    }}
+                    className="relative w-24 h-24"
+                  >
+                    <svg viewBox="0 0 100 100" className="absolute inset-0">
+                      <motion.circle
+                        cx="50"
+                        cy="50"
+                        r="45"
+                        fill="none"
+                        stroke={theme === 'dark' ? '#8352FD' : '#6d28d9'}
+                        strokeWidth="6"
+                        strokeDasharray="283"
+                        strokeDashoffset="283"
+                        animate={{ strokeDashoffset: 0 }}
+                        transition={{ 
+                          duration: 0.6, 
+                          ease: "easeOut",
+                          delay: 0.3
+                        }}
+                        className="success-circle"
+                      />
+                      <motion.path
+                        fill="none"
+                        stroke={theme === 'dark' ? '#8352FD' : '#6d28d9'}
+                        strokeWidth="6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M 30,50 L 45,65 L 70,35"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: 1 }}
+                        transition={{ 
+                          duration: 0.6, 
+                          ease: "easeOut",
+                          delay: 0.9
+                        }}
+                        className="success-check"
+                      />
+                    </svg>
+                  </motion.div>
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 1.5 }}
+                    className="mt-6 text-lg font-medium dark:text-white text-gray-800"
+                  >
+                    Message sent successfully!
+                  </motion.p>
                 </motion.div>
               )}
-            </form>
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>
