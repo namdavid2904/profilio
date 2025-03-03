@@ -22,6 +22,10 @@ function ParticleField() {
   const pointsRef = useRef<THREE.Points>(null);
   const points = useMemo(() => generatePoints(POINT_COUNT), []);
   
+  // Colors based on theme
+  const particleColor = theme === 'dark' ? "#8352FD" : "#6d28d9";
+  const particleSize = theme === 'dark' ? 0.05 : 0.04;
+  
   useFrame(({ clock, mouse }) => {
     const time = clock.getElapsedTime();
     
@@ -48,11 +52,13 @@ function ParticleField() {
           args={[points, 3]}/>
       </bufferGeometry>
       <PointMaterial
-        size={0.05}
-        color={theme === 'dark' ? "#8352FD" : "#5429B8"}
+        size={particleSize}
+        color={particleColor}
         sizeAttenuation
         transparent
-        depthWrite={false}/>
+        depthWrite={false}
+        opacity={theme === 'dark' ? 1 : 0.8}
+      />
     </points>
   );
 }
@@ -62,10 +68,14 @@ interface ParticleBackgroundProps {
 }
 
 const ParticleBackground: React.FC<ParticleBackgroundProps> = ({ className }) => {
+  const { theme } = useTheme();
+  
   return (
-    <div className={`h-full w-full ${className || ''}`}>
+    <div className={`h-full w-full transition-all duration-700 ${className || ''}`}>
       <Canvas camera={{ position: [0, 0, 5], fov: 75 }}>
-        <ambientLight intensity={0.5}/>
+        <color attach="background" args={[theme === 'dark' ? '#050816' : '#ffffff']} />
+        <fog attach="fog" args={[theme === 'dark' ? '#050816' : '#ffffff', 3.5, 15]} />
+        <ambientLight intensity={theme === 'dark' ? 0.5 : 0.8}/>
         <ParticleField/>
       </Canvas>
     </div>
