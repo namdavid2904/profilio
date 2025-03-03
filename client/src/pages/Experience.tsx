@@ -626,14 +626,53 @@ const Experience: React.FC = () => {
       try {
         const data = await getExperiences();
         setExperiences(data);
-        // Set first experience as active by default
-        // if (data.length > 0) {
-        //  setActiveExperienceId(data[0].id);
-        // }
+        if (data && Array.isArray(data) && data.length > 0) {
+          setExperiences(data);
+          if (!isMobile && !activeExperienceId) {
+            setActiveExperienceId(data[0].id);
+          }
+        } else {
+          const mockData = [
+            {
+              id: "1",
+              company: "FPT Corporation",
+              position: "Software Engineer Intern",
+              startDate: "2024-05-27T00:00:00.000Z",
+              endDate: "2024-08-28T00:00:00.000Z",
+              current: false,
+              description: "• Built Asset Allocation module of a Human Resource Management System for 5000+ employees, containerizing with Docker, automating deployment with GitLab CI/CD, and hosting the server on Microsoft Azure.\n• Created 6 REST APIs for inventory management, allocation history, and utilization reports with .NET Core, establishing a real-time alert system with WebSocket to streamline inventory updates.\n• Boosted data retrieval 1.5x by replacing CTEs with indexed temp tables and analyzing execution in SQL Server.\n• Wrote comprehensive unit and integration tests following Test-Driven Development principles with xUnit and Swagger, boosting code quality and minimizing production incidents by 20%.",
+              skills: [".NET Core", "SQL Server", "Docker", "Azure", "GitLab CI/CD", "WebSocket", "xUnit", "Swagger"],
+              location: "Vietnam",
+              logo: "/assets/companies/fpt.png"
+            },
+            {
+              id: "2",
+              company: "CodSoft",
+              position: "Software Engineer Intern",
+              startDate: "2024-03-01T00:00:00.000Z",
+              endDate: "2024-04-30T00:00:00.000Z",
+              current: false,
+              description: "• Developed a bookstore e-commerce website in MVC architecture with Node.js and Express, using MongoDB Atlas for data management, and handling 1000+ concurrent users through request queuing.\n• Reduced payment processing failures by 10% through implementing robust handling and retry mechanisms in Stripe integration, utilizing JWT authentication for secure transactions.\n• Integrated Cloudinary to store 2300+ books, enhancing storage cost through automated image compression.\n• Collaborated with a cross-functional team to design responsive web components with React.js and Bootstrap.",
+              skills: ["Node.js", "Express", "MongoDB", "React.js", "Bootstrap", "Stripe", "JWT", "Cloudinary"],
+              location: "United States",
+              logo: "/assets/companies/codsoft.png"
+            }
+          ];
+          setExperiences(mockData);
+          if (!isMobile && !activeExperienceId && mockData.length > 0) {
+            setActiveExperienceId(mockData[0].id);
+          }
+        }
       } catch (error) {
         console.error('Error fetching experiences:', error);
-        // Mock data for testing
-        setExperiences([        {
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const useMockData = () => {
+      const mockData = [
+        {
           id: "1",
           company: "FPT Corporation",
           position: "Software Engineer Intern",
@@ -656,9 +695,11 @@ const Experience: React.FC = () => {
           skills: ["Node.js", "Express", "MongoDB", "React.js", "Bootstrap", "Stripe", "JWT", "Cloudinary"],
           location: "United States",
           logo: "/assets/companies/codsoft.png"
-        }]);
-      } finally {
-        setLoading(false);
+        }
+      ];
+      setExperiences(mockData);
+      if (!isMobile && mockData.length > 0 && !activeExperienceId) {
+        setActiveExperienceId(mockData[0].id);
       }
     };
     
