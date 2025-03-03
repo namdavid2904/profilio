@@ -38,3 +38,20 @@ model Skill {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+// In server/prisma/schema.prisma, add this new model:
+
+model Experience {
+  id          String   @id @default(uuid())
+  company     String
+  position    String
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean  @default(false)
+  description String
+  skills      String[]
+  location    String?
+  logo        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
