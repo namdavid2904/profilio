@@ -88,7 +88,7 @@ const SkillIcon: React.FC<{
         position={[0, 0, 0.06]}
         color="white"
         fontSize={0.15}
-        //font="/fonts/inter-medium.woff"
+        font=""
         anchorX="center"
         anchorY="middle"
       >
@@ -99,29 +99,66 @@ const SkillIcon: React.FC<{
 };
 
 // 3D skills visualization
-const SkillsVisualization: React.FC<{ skills: string[]; theme: string }> = ({ skills, theme }) => {
-  return (
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 5], fov: 75 }}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} intensity={1} />
-      
-      {skills.slice(0, 5).map((skill, i) => (
-        <SkillIcon 
-          key={i}
-          skill={skill}
-          position={[
-            (i - 2) * 1.2, 
-            Math.sin(i * 1.5) * 0.3,
-            Math.cos(i * 0.5) * -0.2
-          ]}
-          color={theme === 'dark' ? '#8352FD' : '#6d28d9'}
-        />
-      ))}
-      
-      <fog attach="fog" args={[theme === 'dark' ? '#050816' : '#ffffff', 8, 15]} />
-    </Canvas>
-  );
-};
+/*const SkillsVisualization: React.FC<{ skills: string[]; theme: string }> = ({ skills, theme }) => {
+  const [hasError, setHasError] = useState(false);
+  try {
+    if (hasError) {
+      // Fallback to a simpler visualization when 3D rendering fails
+      return (
+        <div className="h-[200px] flex flex-wrap gap-2 items-center justify-center p-4">
+          {skills.slice(0, 5).map((skill, i) => (
+            <span 
+              key={i}
+              className={`px-3 py-1.5 rounded-full text-sm ${
+                theme === 'dark' ? 'bg-accent/20 text-white' : 'bg-accent-light/20 text-gray-800'
+              }`}
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      );
+    }
+    return (
+      <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 5], fov: 75 }}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} intensity={1} />
+        
+        {skills.slice(0, 5).map((skill, i) => (
+          <SkillIcon 
+            key={i}
+            skill={skill}
+            position={[
+              (i - 2) * 1.2, 
+              Math.sin(i * 1.5) * 0.3,
+              Math.cos(i * 0.5) * -0.2
+            ]}
+            color={theme === 'dark' ? '#8352FD' : '#6d28d9'}
+          />
+        ))}
+        
+        <fog attach="fog" args={[theme === 'dark' ? '#050816' : '#ffffff', 8, 15]} />
+      </Canvas>
+    );
+  } catch (error) {
+    console.error("Error rendering 3D skills visualization:", error);
+    setHasError(true);
+    return (
+      <div className="h-[200px] flex flex-wrap gap-2 items-center justify-center p-4">
+        {skills.slice(0, 5).map((skill, i) => (
+          <span 
+            key={i}
+            className={`px-3 py-1.5 rounded-full text-sm ${
+              theme === 'dark' ? 'bg-accent/20 text-white' : 'bg-accent-light/20 text-gray-800'
+            }`}
+          >
+            {skill}
+          </span>
+        ))}
+      </div>
+    );
+  }
+};*/
 
 // Confetti effect
 const createConfetti = (x: number, y: number, theme: string) => {
@@ -411,29 +448,19 @@ const ExperienceCard: React.FC<{
   // Card motion variants
   const cardVariants: Variants = {
     hidden: { 
-      opacity: 0, 
-      y: 50,
-      scale: 0.95,
-      rotateX: 5,
-      rotateY: -5,
+      opacity: 0.2, 
+      y: 20
     },
     visible: { 
       opacity: 1, 
       y: 0,
-      scale: 1,
-      rotateX: 0,
-      rotateY: 0,
-      transition: { 
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
-      }
+      transition: { duration: 0.5 }
     },
     active: {
       scale: 1.02,
       boxShadow: theme === 'dark' 
-        ? '0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(131, 82, 253, 0.3)'
-        : '0 20px 40px rgba(0, 0, 0, 0.1), 0 0 20px rgba(109, 40, 217, 0.2)',
-      borderColor: theme === 'dark' ? '#8352FD' : '#6d28d9',
+        ? '0 10px 30px rgba(0, 0, 0, 0.3)' 
+        : '0 10px 30px rgba(0, 0, 0, 0.1)',
       backgroundColor: theme === 'dark' ? 'rgba(21, 16, 48, 0.9)' : 'rgba(255, 255, 255, 0.9)',
     }
   };
@@ -579,23 +606,7 @@ const ExperienceCard: React.FC<{
         >
           View Details
         </motion.button>
-      )}
-
-      {/* Add 3D skills visualization for active cards on desktop */}
-      {!isMobile && isActive && (
-        <motion.div 
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 200 }}
-          exit={{ opacity: 0, height: 0 }}
-          className="w-full mt-8 mb-2 relative">
-          <div className="absolute inset-0">
-            <SkillsVisualization 
-              skills={experience.skills} 
-              theme={theme} 
-/>
-          </div>
-        </motion.div>
-      )}      
+      )}    
     </motion.div>
   );
 };
@@ -607,7 +618,67 @@ const Experience: React.FC = () => {
   const [activeExperienceId, setActiveExperienceId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery("(max-width: 768px)");
+
+  useEffect(() => {
+    // Force styles to make cards visible
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .card-base {
+        opacity: 1 !important;
+        transform: none !important;
+        display: block !important;
+        visibility: visible !important;
+        position: relative !important;
+        min-height: 200px !important;
+        background-color: ${theme === 'dark' ? 'rgba(21, 16, 48, 0.9)' : 'rgba(255, 255, 255, 0.9)'} !important;
+        padding: 1.5rem !important;
+        border-radius: 0.75rem !important;
+        overflow: visible !important;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, [theme]);
+
+  const mockData = [
+    {
+      id: "1",
+      company: "FPT Corporation",
+      position: "Software Engineer Intern",
+      startDate: "2024-05-27T00:00:00.000Z",
+      endDate: "2024-08-28T00:00:00.000Z",
+      current: false,
+      description: "• Built Asset Allocation module of a Human Resource Management System for 5000+ employees, containerizing with Docker, automating deployment with GitLab CI/CD, and hosting the server on Microsoft Azure.\n• Created 6 REST APIs for inventory management, allocation history, and utilization reports with .NET Core, establishing a real-time alert system with WebSocket to streamline inventory updates.\n• Boosted data retrieval 1.5x by replacing CTEs with indexed temp tables and analyzing execution in SQL Server.\n• Wrote comprehensive unit and integration tests following Test-Driven Development principles with xUnit and Swagger, boosting code quality and minimizing production incidents by 20%.",
+      skills: [".NET Core", "SQL Server", "Docker", "Azure", "GitLab CI/CD", "WebSocket", "xUnit", "Swagger"],
+      location: "Vietnam",
+      logo: "/assets/companies/fpt.png"
+    },
+    {
+      id: "2",
+      company: "CodSoft",
+      position: "Software Engineer Intern",
+      startDate: "2024-03-01T00:00:00.000Z",
+      endDate: "2024-04-30T00:00:00.000Z",
+      current: false,
+      description: "• Developed a bookstore e-commerce website in MVC architecture with Node.js and Express, using MongoDB Atlas for data management, and handling 1000+ concurrent users through request queuing.\n• Reduced payment processing failures by 10% through implementing robust handling and retry mechanisms in Stripe integration, utilizing JWT authentication for secure transactions.\n• Integrated Cloudinary to store 2300+ books, enhancing storage cost through automated image compression.\n• Collaborated with a cross-functional team to design responsive web components with React.js and Bootstrap.",
+      skills: ["Node.js", "Express", "MongoDB", "React.js", "Bootstrap", "Stripe", "JWT", "Cloudinary"],
+      location: "United States",
+      logo: "/assets/companies/codsoft.png"
+    }
+  ];
   
+  // Define useMockData function before using it
+  const useMockData = () => {
+    console.log("Using mock data");
+    setExperiences(mockData);
+    if (!isMobile && !activeExperienceId) {
+      setActiveExperienceId(mockData[0].id);
+    }
+  };
+
   // Scroll animations
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -624,53 +695,31 @@ const Experience: React.FC = () => {
   useEffect(() => {
     const fetchExperiences = async () => {
       try {
+        console.log("Fetching experiences...");
         const data = await getExperiences();
-        setExperiences(data);
+        
+        // Check if data is valid and has items
         if (data && Array.isArray(data) && data.length > 0) {
+          console.log("Got API data:", data);
           setExperiences(data);
           if (!isMobile && !activeExperienceId) {
             setActiveExperienceId(data[0].id);
           }
         } else {
-          const mockData = [
-            {
-              id: "1",
-              company: "FPT Corporation",
-              position: "Software Engineer Intern",
-              startDate: "2024-05-27T00:00:00.000Z",
-              endDate: "2024-08-28T00:00:00.000Z",
-              current: false,
-              description: "• Built Asset Allocation module of a Human Resource Management System for 5000+ employees, containerizing with Docker, automating deployment with GitLab CI/CD, and hosting the server on Microsoft Azure.\n• Created 6 REST APIs for inventory management, allocation history, and utilization reports with .NET Core, establishing a real-time alert system with WebSocket to streamline inventory updates.\n• Boosted data retrieval 1.5x by replacing CTEs with indexed temp tables and analyzing execution in SQL Server.\n• Wrote comprehensive unit and integration tests following Test-Driven Development principles with xUnit and Swagger, boosting code quality and minimizing production incidents by 20%.",
-              skills: [".NET Core", "SQL Server", "Docker", "Azure", "GitLab CI/CD", "WebSocket", "xUnit", "Swagger"],
-              location: "Vietnam",
-              logo: "/assets/companies/fpt.png"
-            },
-            {
-              id: "2",
-              company: "CodSoft",
-              position: "Software Engineer Intern",
-              startDate: "2024-03-01T00:00:00.000Z",
-              endDate: "2024-04-30T00:00:00.000Z",
-              current: false,
-              description: "• Developed a bookstore e-commerce website in MVC architecture with Node.js and Express, using MongoDB Atlas for data management, and handling 1000+ concurrent users through request queuing.\n• Reduced payment processing failures by 10% through implementing robust handling and retry mechanisms in Stripe integration, utilizing JWT authentication for secure transactions.\n• Integrated Cloudinary to store 2300+ books, enhancing storage cost through automated image compression.\n• Collaborated with a cross-functional team to design responsive web components with React.js and Bootstrap.",
-              skills: ["Node.js", "Express", "MongoDB", "React.js", "Bootstrap", "Stripe", "JWT", "Cloudinary"],
-              location: "United States",
-              logo: "/assets/companies/codsoft.png"
-            }
-          ];
-          setExperiences(mockData);
-          if (!isMobile && !activeExperienceId && mockData.length > 0) {
-            setActiveExperienceId(mockData[0].id);
-          }
+          console.warn("API returned empty data - using mock data");
+          useMockData();
         }
       } catch (error) {
-        console.error('Error fetching experiences:', error);
+        console.error("Failed to fetch experiences:", error);
+        useMockData();
       } finally {
+        // Always set loading to false regardless of outcome
         setLoading(false);
       }
     };
-
+    
     const useMockData = () => {
+      console.log("Using mock data");
       const mockData = [
         {
           id: "1",
@@ -697,14 +746,16 @@ const Experience: React.FC = () => {
           logo: "/assets/companies/codsoft.png"
         }
       ];
+      
       setExperiences(mockData);
-      if (!isMobile && mockData.length > 0 && !activeExperienceId) {
+      if (!isMobile && !activeExperienceId) {
         setActiveExperienceId(mockData[0].id);
       }
     };
     
     fetchExperiences();
-  }, []);
+  }, [isMobile, activeExperienceId]);
+
   
   // Reset active experience when switching to mobile
   useEffect(() => {
