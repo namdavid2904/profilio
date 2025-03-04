@@ -39,8 +39,6 @@ model Skill {
   updatedAt DateTime @updatedAt
 }
 
-// In server/prisma/schema.prisma, add this new model:
-
 model Experience {
   id          String   @id @default(uuid())
   company     String
