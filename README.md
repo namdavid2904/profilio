@@ -2,9 +2,7 @@
 
 A 3D interactive portfolio website built with React, Three.js, and Node.js. This full-stack application showcases projects, skills, and work experience with dynamic content management and modern interactive UI elements.
 
-[![CI/CD Status](https://github.com/namdavid2904/profilio/actions/workflows/ci.yml/badge.svg)](https://github.com/namdavid2904/profilio/actions/workflows/ci.yml)
-
-![Portfolio Screenshot](client/public/assets/portfolio-preview.png)
+![Portfolio Screenshot](client/public/assets/profilio.png)
 
 ## Features
 
