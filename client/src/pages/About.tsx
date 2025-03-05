@@ -22,6 +22,7 @@ const fallbackSkills: Skill[] = [
   { id: "l6", name: 'SQL', category: 'Language', level: 88 },
   { id: "l7", name: 'HTML', category: 'Language', level: 95 },
   { id: "l8", name: 'CSS', category: 'Language', level: 90 },
+  { id: "l9", name: 'C', category: 'Language', level: 72 },
   
   // Backend
   { id: "b1", name: '.NET Core', category: 'Backend', level: 85 },
