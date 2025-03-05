@@ -12,6 +12,40 @@ interface Skill {
   level: number;
 }
 
+const fallbackSkills: Skill[] = [
+  // Languages
+  { id: "l1", name: 'C#', category: 'Language', level: 90 },
+  { id: "l2", name: 'TypeScript', category: 'Language', level: 92 },
+  { id: "l3", name: 'JavaScript', category: 'Language', level: 95 },
+  { id: "l4", name: 'Python', category: 'Language', level: 85 },
+  { id: "l5", name: 'Java', category: 'Language', level: 80 },
+  { id: "l6", name: 'SQL', category: 'Language', level: 88 },
+  { id: "l7", name: 'HTML', category: 'Language', level: 95 },
+  { id: "l8", name: 'CSS', category: 'Language', level: 90 },
+  
+  // Backend
+  { id: "b1", name: '.NET Core', category: 'Backend', level: 85 },
+  { id: "b2", name: 'Node.js', category: 'Backend', level: 90 },
+  { id: "b3", name: 'Express', category: 'Backend', level: 88 },
+  { id: "b4", name: 'Flask', category: 'Backend', level: 78 },
+  
+  // Frontend
+  { id: "f1", name: 'React', category: 'Frontend', level: 87 },
+  { id: "f2", name: 'Three.js', category: 'Frontend', level: 78 },
+  { id: "f3", name: 'Framer Motion', category: 'Frontend', level: 80 },
+  { id: "f4", name: 'Tailwind CSS', category: 'Frontend', level: 84 },
+  
+  // Database
+  { id: "d1", name: 'MS SQL Server', category: 'Database', level: 85 },
+  { id: "d2", name: 'PostgreSQL', category: 'Database', level: 88 },
+  { id: "d3", name: 'Prisma ORM', category: 'Database', level: 85 },
+  
+  // DevOps
+  { id: "dv1", name: 'Docker', category: 'DevOps', level: 80 },
+  { id: "dv2", name: 'GitHub Actions', category: 'DevOps', level: 75 },
+  { id: "dv3", name: 'Azure', category: 'DevOps', level: 70 },
+];
+
 // Convert skill level to width class
 const getWidthClass = (level: number): string => {
   return `w-[${level}%]`;
@@ -173,7 +207,7 @@ const SkillCategory: React.FC<{ title: string, skills: Skill[], theme: string }>
 };
 
 const About: React.FC = () => {
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const [skills, setSkills] = useState<Skill[]>(fallbackSkills);
   const [loading, setLoading] = useState(true);
   const { theme } = useTheme();
   const aboutRef = useRef<HTMLDivElement>(null);
@@ -189,7 +223,9 @@ const About: React.FC = () => {
     const fetchSkills = async () => {
       try {
         const data = await getSkills();
-        setSkills(data);
+        if (data && Array.isArray(data) && data.length > 0) {
+          setSkills(data);
+        }
       } catch (error) {
         console.error("Failed to fetch skills:", error);
       } finally {
