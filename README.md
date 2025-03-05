@@ -2,7 +2,10 @@
 
 A 3D interactive portfolio website built with React, Three.js, and Node.js. This full-stack application showcases projects, skills, and work experience with dynamic content management and modern interactive UI elements.
 
+View the live site: https://nampham.onrender.com/
+
 ![Portfolio Screenshot](client/public/assets/projects/profilio.png)
+
 
 ## Features
 
@@ -41,10 +44,6 @@ A 3D interactive portfolio website built with React, Three.js, and Node.js. This
 - GitHub Actions for CI/CD
 - Nginx for serving static assets
 - PostgreSQL containerization
-
-## Live Demo
-
-View the live site: 
 
 ## Development
 
